@@ -5,12 +5,15 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
+import com.drew.metadata.avi.AviDirectory;
 import com.drew.metadata.exif.ExifDirectoryBase;
 import com.drew.metadata.file.FileSystemDirectory;
 import com.drew.metadata.file.FileTypeDirectory;
+import com.drew.metadata.gif.GifHeaderDirectory;
 import com.drew.metadata.mov.media.QuickTimeMediaDirectory;
 import com.drew.metadata.mov.media.QuickTimeVideoDirectory;
 import com.drew.metadata.mp4.media.Mp4VideoDirectory;
+import com.drew.metadata.png.PngDirectory;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -106,6 +109,22 @@ public class LocalMediaItem {
                 }
             }
 
+            if(metadata.containsDirectoryOfType(PngDirectory.class)) {
+                final Collection<PngDirectory> values = metadata.getDirectoriesOfType(PngDirectory.class);
+                for (PngDirectory pngDirectory : values) {
+                    width = getLongValue(pngDirectory, PngDirectory.TAG_IMAGE_WIDTH, width);
+                    height = getLongValue(pngDirectory, PngDirectory.TAG_IMAGE_HEIGHT, height);
+                }
+            }
+
+            if(metadata.containsDirectoryOfType(GifHeaderDirectory.class)) {
+                final Collection<GifHeaderDirectory> values = metadata.getDirectoriesOfType(GifHeaderDirectory.class);
+                for (GifHeaderDirectory gifHeaderDirectory : values) {
+                    width = getLongValue(gifHeaderDirectory, GifHeaderDirectory.TAG_IMAGE_WIDTH, width);
+                    height = getLongValue(gifHeaderDirectory, GifHeaderDirectory.TAG_IMAGE_HEIGHT, height);
+                }
+            }
+
             if(metadata.containsDirectoryOfType(QuickTimeVideoDirectory.class)) {
                 final Collection<QuickTimeVideoDirectory> values = metadata.getDirectoriesOfType(QuickTimeVideoDirectory.class);
                 for (QuickTimeVideoDirectory quickTimeVideoDirectory : values) {
@@ -121,6 +140,14 @@ public class LocalMediaItem {
                     originalDate = getDateValue(mp4VideoDirectory, Mp4VideoDirectory.TAG_CREATION_TIME, originalDate);
                     width = getLongValue(mp4VideoDirectory, Mp4VideoDirectory.TAG_WIDTH, width);
                     height = getLongValue(mp4VideoDirectory, Mp4VideoDirectory.TAG_WIDTH, height);
+                }
+            }
+
+            if(metadata.containsDirectoryOfType(AviDirectory.class)) {
+                final Collection<AviDirectory> values = metadata.getDirectoriesOfType(AviDirectory.class);
+                for (AviDirectory aviDirectory : values) {
+                    width = getLongValue(aviDirectory, AviDirectory.TAG_WIDTH, width);
+                    height = getLongValue(aviDirectory, AviDirectory.TAG_WIDTH, height);
                 }
             }
 
